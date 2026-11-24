@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kalzy Tools — Downloader Lengkap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bk:#000;--wh:#fff;--yl:#ffe500;--pk:#ff3d8b;--bl:#2f6bff;--gr:#22e07a;--rd:#ff3b30;--or:#ff8a00;--bg:#f2efe6}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);background-image:radial-gradient(#0003 1.2px,transparent 1.2px);background-size:18px 18px;color:var(--bk);font-family:'Space Mono',monospace}
+svg.i{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:square;stroke-linejoin:miter;flex:none}
+button{font-family:inherit;cursor:pointer}
+.wrap{width:100%;max-width:640px;margin:0 auto;padding:20px 16px 36px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:20px}
+.logo{display:flex;align-items:center;gap:8px;background:var(--bk);color:var(--yl);font-family:'Archivo Black',sans-serif;padding:8px 12px;font-size:15px;box-shadow:5px 5px 0 var(--pk)}
+.logo svg{font-size:20px}
+.badge{cursor:pointer;font-family:inherit;color:var(--bk);display:flex;align-items:center;gap:6px;background:var(--gr);border:3px solid var(--bk);padding:6px 10px;font-weight:700;font-size:12px;text-transform:uppercase;transform:rotate(2deg)}
+h1{font-family:'Archivo Black',sans-serif;font-size:clamp(38px,11.5vw,64px);line-height:.95;margin:0 0 18px;text-transform:uppercase;letter-spacing:-.02em}
+h1 mark{background:var(--yl);padding:0 8px;border:4px solid var(--bk);box-shadow:6px 6px 0 var(--bk);display:inline-block;transform:rotate(-2deg);margin:4px 0}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);border:4px solid var(--bk);background:var(--wh);box-shadow:6px 6px 0 var(--bk);margin-bottom:24px}
+.tabs button{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;border-right:4px solid var(--bk);background:var(--wh);padding:10px 4px;font:700 11px 'Space Mono',monospace;text-transform:uppercase}
+.tabs button:last-child{border-right:0}
+.tabs button svg{font-size:22px}
+.tabs button.on{background:var(--yl)}
+.pane{display:none}.pane.on{display:block}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;margin-bottom:6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{display:flex;align-items:center;gap:6px;flex:none;border:3px solid var(--bk);background:var(--wh);padding:8px 12px;font:700 12px 'Space Mono',monospace;text-transform:uppercase;box-shadow:3px 3px 0 var(--bk)}
+.chip.on{background:var(--c,var(--yl));transform:translate(2px,2px);box-shadow:1px 1px 0 var(--bk)}
+.chip svg{font-size:16px}
+.panel{background:var(--bl);border:4px solid var(--bk);box-shadow:9px 9px 0 var(--bk);padding:16px}
+.lbl{display:flex;align-items:center;gap:8px;color:var(--wh);font-weight:700;text-transform:uppercase;font-size:13px;margin-bottom:10px}
+.q{margin-left:auto;background:var(--yl);color:var(--bk);border:3px solid var(--bk);padding:2px 8px;font-size:11px}
+.q.out{background:var(--rd);color:var(--wh)}
+.field{display:flex;align-items:center;background:var(--wh);border:4px solid var(--bk)}
+.field>svg{font-size:22px;margin:0 6px 0 12px}
+input{flex:1;min-width:0;border:0;outline:0;background:none;font:700 15px 'Space Mono',monospace;padding:15px 8px;color:var(--bk)}
+input::placeholder{color:#777;font-weight:400}
+.paste{display:flex;align-items:center;gap:6px;background:var(--yl);border:0;border-left:4px solid var(--bk);font:700 12px 'Space Mono',monospace;text-transform:uppercase;padding:0 14px;align-self:stretch}
+.paste:active{background:var(--bk);color:var(--yl)}
+.go{width:100%;margin-top:14px;display:flex;justify-content:center;align-items:center;gap:10px;background:var(--pk);color:var(--bk);border:4px solid var(--bk);box-shadow:6px 6px 0 var(--bk);font:400 22px 'Archivo Black',sans-serif;text-transform:uppercase;padding:15px;transition:transform .08s,box-shadow .08s}
+.go svg{font-size:26px}
+.go:hover{background:var(--yl)}
+.go:active{transform:translate(6px,6px);box-shadow:0 0 0 var(--bk)}
+.go:disabled{background:#ccc;cursor:wait}
+.msg{display:none;align-items:center;gap:10px;margin-top:18px;background:var(--rd);color:var(--wh);border:4px solid var(--bk);box-shadow:6px 6px 0 var(--bk);padding:12px;font-weight:700;font-size:14px}
+.msg.on{display:flex}.msg svg{font-size:22px}
+.res{display:none;margin-top:26px;background:var(--wh);border:4px solid var(--bk);box-shadow:9px 9px 0 var(--bk)}
+.res.on{display:block;animation:pop .25s steps(4)}
+@keyframes pop{from{transform:translate(-8px,8px);opacity:0}to{transform:none;opacity:1}}
+.rh{display:flex;align-items:center;gap:8px;background:var(--gr);border-bottom:4px solid var(--bk);padding:10px 14px;font:400 15px 'Archivo Black',sans-serif;text-transform:uppercase}
+.rh svg{font-size:20px}
+.meta{display:flex;gap:14px;padding:14px;border-bottom:4px solid var(--bk)}
+.meta img{width:78px;height:104px;object-fit:cover;border:4px solid var(--bk);background:var(--yl);flex:none}
+.meta b{display:flex;align-items:center;gap:6px;font-family:'Archivo Black',sans-serif;font-size:17px;word-break:break-word}
+.meta small{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-top:6px;font-size:13px}
+.dl{display:flex;flex-direction:column;gap:12px;padding:14px}
+.dl button{display:flex;align-items:center;gap:12px;background:var(--c,var(--yl));border:4px solid var(--bk);box-shadow:5px 5px 0 var(--bk);padding:12px;font:700 14px 'Space Mono',monospace;text-transform:uppercase;text-align:left;transition:transform .08s,box-shadow .08s}
+.dl button:active{transform:translate(5px,5px);box-shadow:none}
+.dl .ic{font-size:26px}.dl .t{flex:1}.dl .dn{font-size:22px}
+.dl em{font-style:normal;background:var(--bk);color:var(--wh);padding:3px 8px;font-size:11px}
+.sec{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:30px 0 12px;font:400 20px 'Archivo Black',sans-serif;text-transform:uppercase}
+.sec span{display:flex;align-items:center;gap:8px}.sec svg{font-size:22px}
+.clr{display:flex;align-items:center;gap:6px;background:var(--wh);border:3px solid var(--bk);padding:6px 10px;font:700 11px 'Space Mono',monospace;text-transform:uppercase}
+.hist{display:flex;flex-direction:column;gap:10px}
+.hi{display:flex;align-items:center;gap:10px;background:var(--wh);border:3px solid var(--bk);padding:10px;box-shadow:4px 4px 0 var(--bk);font-size:12px;font-weight:700}
+.hi svg{font-size:20px}.hi .u{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hi button{background:var(--yl);border:3px solid var(--bk);padding:5px 8px;font:700 11px 'Space Mono',monospace;text-transform:uppercase}
+.empty{border:3px dashed var(--bk);padding:18px;text-align:center;font-weight:700;font-size:13px;text-transform:uppercase;background:#fff8}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{display:flex;flex-direction:column;gap:8px;background:var(--c);border:4px solid var(--bk);box-shadow:6px 6px 0 var(--bk);padding:14px;text-decoration:none;color:var(--bk);text-align:left;font:inherit;position:relative;transition:transform .08s,box-shadow .08s}
+button.card:active,a.card:active{transform:translate(6px,6px);box-shadow:none}
+.card svg.big{font-size:34px}
+.card b{font:400 16px 'Archivo Black',sans-serif;text-transform:uppercase}
+.card small{font-size:12px;font-weight:700}
+.st{position:absolute;top:8px;right:8px;background:var(--bk);color:var(--wh);font-size:10px;font-weight:700;padding:2px 6px;text-transform:uppercase}
+.st.ok{background:var(--gr);color:var(--bk);border:2px solid var(--bk)}
+.list{display:flex;flex-direction:column;gap:14px}
+.ch{display:flex;align-items:center;gap:14px;background:var(--c);border:4px solid var(--bk);box-shadow:6px 6px 0 var(--bk);padding:14px;text-decoration:none;color:var(--bk);transition:transform .08s,box-shadow .08s}
+.ch:active{transform:translate(6px,6px);box-shadow:none}
+.ch>svg:first-child{font-size:34px}
+.ch div{flex:1;min-width:0}.ch b{display:block;font:400 17px 'Archivo Black',sans-serif;text-transform:uppercase}
+.ch small{font-size:12px;font-weight:700}.ch>svg:last-child{font-size:22px}
+.feats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:30px}
+.feats div{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;border:3px solid var(--bk);padding:12px 4px;font-weight:700;font-size:11px;text-transform:uppercase;background:var(--c)}
+.feats svg{font-size:26px}
+footer{margin-top:34px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.own{display:flex;align-items:center;gap:8px;background:var(--bk);color:var(--wh);padding:10px 14px;font-weight:700;font-size:14px;box-shadow:5px 5px 0 var(--yl)}
+.own b{color:var(--yl);text-transform:uppercase;font-family:'Archivo Black',sans-serif;font-weight:400}
+.own svg{font-size:18px;color:var(--yl)}
+.yr{font-size:12px;font-weight:700}
+.ov{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+.ov.on{display:flex}
+.md{width:100%;max-width:400px;background:var(--wh);border:4px solid var(--bk);box-shadow:10px 10px 0 var(--yl);animation:pop .25s steps(4)}
+.mh{display:flex;align-items:center;gap:10px;background:var(--gr);border-bottom:4px solid var(--bk);padding:12px 14px;font:400 18px 'Archivo Black',sans-serif;text-transform:uppercase}
+.mh svg{font-size:26px}
+.mb{padding:16px;font-size:14px;font-weight:700;line-height:1.5}
+.ma{display:flex;flex-direction:column;gap:12px;padding:0 16px 16px}
+.ma a,.ma button{display:flex;justify-content:center;align-items:center;gap:8px;border:4px solid var(--bk);padding:13px;font:400 17px 'Archivo Black',sans-serif;text-transform:uppercase;text-decoration:none;color:var(--bk);box-shadow:5px 5px 0 var(--bk);transition:transform .08s,box-shadow .08s}
+.ma a{background:var(--gr)}
+.ma button{background:var(--wh)}
+.ma a:active,.ma button:active{transform:translate(5px,5px);box-shadow:none}
+.ma svg{font-size:22px}
+.li{width:100%;border:4px solid var(--bk);padding:13px;font:700 16px 'Space Mono',monospace;margin-top:10px;background:var(--wh)}
+.lerr{color:var(--rd);font-size:12px;font-weight:700;margin-top:8px;min-height:16px}
+.dl button[disabled]{opacity:.55;box-shadow:none;cursor:not-allowed;transform:none}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="download" viewBox="0 0 24 24"><path d="M12 3v13M6 11l6 6 6-6M4 21h16"/></symbol>
+<symbol id="link" viewBox="0 0 24 24"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></symbol>
+<symbol id="clip" viewBox="0 0 24 24"><path d="M8 4H5v17h14V4h-3M8 2h8v4H8z"/></symbol>
+<symbol id="video" viewBox="0 0 24 24"><path d="M3 5h13v14H3zM16 10l5-3v10l-5-3"/></symbol>
+<symbol id="music" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></symbol>
+<symbol id="image" viewBox="0 0 24 24"><path d="M3 4h18v16H3zM3 16l5-5 5 5 3-3 5 5"/><circle cx="16" cy="9" r="1.5"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><path d="M3 12l6 6L21 5"/></symbol>
+<symbol id="alert" viewBox="0 0 24 24"><path d="M12 3L2 21h20zM12 10v5M12 18v1"/></symbol>
+<symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-5 4-7 8-7s8 2 8 7"/></symbol>
+<symbol id="bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol>
+<symbol id="drop" viewBox="0 0 24 24"><path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"/><path d="M4 4l16 16"/></symbol>
+<symbol id="lock" viewBox="0 0 24 24"><path d="M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+<symbol id="crown" viewBox="0 0 24 24"><path d="M3 18l-1-11 6 5 4-8 4 8 6-5-1 11zM3 21h18"/></symbol>
+<symbol id="note" viewBox="0 0 24 24"><path d="M14 3v11a4 4 0 1 1-4-4h4M14 3c0 3 2 5 5 5"/></symbol>
+<symbol id="grid" viewBox="0 0 24 24"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/></symbol>
+<symbol id="send" viewBox="0 0 24 24"><path d="M21 3L3 11l7 3 3 7zM10 14l11-11"/></symbol>
+<symbol id="chat" viewBox="0 0 24 24"><path d="M3 4h18v13H9l-6 4z"/><path d="M8 9h8M8 13h5"/></symbol>
+<symbol id="globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol>
+<symbol id="code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+<symbol id="play" viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><path d="M10 9l5 3-5 3z"/></symbol>
+<symbol id="cam" viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></symbol>
+<symbol id="fb" viewBox="0 0 24 24"><path d="M14 22v-9h3l1-4h-4V7c0-1 .5-2 2-2h2V1h-3c-3 0-5 2-5 5v3H6v4h3v9z"/></symbol>
+<symbol id="bird" viewBox="0 0 24 24"><path d="M3 3l7 9-7 9h3l5.5-6.5L16 21h5l-7.5-10L20 3h-3l-5 6-4-6z"/></symbol>
+<symbol id="disc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M7 9c4-1 8 0 10 2M8 13c3-1 6 0 8 1.5M9 16.5c2-.5 4 0 5.5 1"/></symbol>
+<symbol id="hist" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l4 2"/></symbol>
+<symbol id="trash" viewBox="0 0 24 24"><path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"/></symbol>
+<symbol id="arrow" viewBox="0 0 24 24"><path d="M5 19L19 5M8 5h11v11"/></symbol>
+<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="heart" viewBox="0 0 24 24"><path d="M12 21L3 12a5 5 0 0 1 9-5 5 5 0 0 1 9 5z"/></symbol>
+</defs></svg>
+
+<div class="ov" id="lov">
+  <div class="md">
+    <div class="mh" style="background:var(--yl)"><svg class="i"><use href="#user"/></svg>Masuk dulu</div>
+    <div class="mb">Cukup pakai username, tanpa password. Limit kualitas dihitung per username.
+      <input class="li" id="lin" maxlength="20" placeholder="username kamu" autocomplete="off" autocapitalize="off">
+      <div class="lerr" id="lerr"></div></div>
+    <div class="ma"><button id="lgo" type="button" style="background:var(--pk)"><svg class="i"><use href="#check"/></svg>Masuk</button></div>
+  </div>
+</div>
+
+<div class="ov" id="ov">
+  <div class="md">
+    <div class="mh"><svg class="i"><use href="#chat"/></svg>Follow dulu yuk!</div>
+    <div class="mb">Follow saluran WhatsApp Kalzy biar dapat info update, fitur baru, dan tools terbaru.</div>
+    <div class="ma">
+      <a id="fol" target="_blank" rel="noopener" href="#"><svg class="i"><use href="#check"/></svg>Follow</a>
+      <button id="later" type="button"><svg class="i"><use href="#clock"/></svg>Nanti aja</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="top">
+    <div class="logo"><svg class="i"><use href="#note"/></svg>KALZY.TOOLS</div>
+    <button class="badge" id="who" type="button"><svg class="i"><use href="#user"/></svg><span id="whot">Masuk</span></button>
+  </div>
+
+  <h1>Semua <mark>downloader</mark> ada di sini</h1>
+
+  <nav class="tabs" id="tabs">
+    <button data-p="dl" class="on"><svg class="i"><use href="#download"/></svg>Unduh</button>
+    <button data-p="tools"><svg class="i"><use href="#grid"/></svg>Tools</button>
+    <button data-p="ch"><svg class="i"><use href="#send"/></svg>Saluran</button>
+  </nav>
+
+  <!-- DOWNLOAD -->
+  <section class="pane on" id="p-dl">
+    <div class="chips" id="chips"></div>
+    <div class="panel">
+      <div class="lbl"><svg class="i"><use href="#link"/></svg><span id="lbl">Link video</span></div>
+      <div class="field">
+        <svg class="i"><use href="#video"/></svg>
+        <input id="url" type="url" autocomplete="off" inputmode="url">
+        <button class="paste" id="paste" type="button"><svg class="i"><use href="#clip"/></svg>Paste</button>
+      </div>
+      <button class="go" id="go" type="button"><svg class="i"><use href="#download"/></svg><span id="gotxt">Unduh</span></button>
+    </div>
+    <div class="msg" id="msg"><svg class="i"><use href="#alert"/></svg><span id="msgt"></span></div>
+    <section class="res" id="res">
+      <div class="rh"><svg class="i"><use href="#check"/></svg>Ketemu!</div>
+      <div class="meta">
+        <img id="thumb" alt="" hidden>
+        <div><b><svg class="i"><use href="#user"/></svg><span id="title">Siap diunduh</span></b><small id="desc"></small></div>
+      </div>
+      <div class="dl" id="dl"></div>
+    </section>
+
+    <div class="sec"><span><svg class="i"><use href="#hist"/></svg>Riwayat</span><button class="clr" id="clr"><svg class="i"><use href="#trash"/></svg>Hapus</button></div>
+    <div class="hist" id="hist"></div>
+
+    <div class="feats">
+      <div style="--c:var(--yl)"><svg class="i"><use href="#drop"/></svg>No watermark</div>
+      <div style="--c:var(--pk)"><svg class="i"><use href="#bolt"/></svg>Super cepat</div>
+      <div style="--c:var(--gr)"><svg class="i"><use href="#lock"/></svg>Tanpa login</div>
+    </div>
+  </section>
+
+  <!-- TOOLS -->
+  <section class="pane" id="p-tools">
+    <div class="sec" style="margin-top:0"><span><svg class="i"><use href="#grid"/></svg>Semua tools</span></div>
+    <div class="grid" id="toolgrid"></div>
+  </section>
+
+  <!-- SALURAN -->
+  <section class="pane" id="p-ch">
+    <div class="sec" style="margin-top:0"><span><svg class="i"><use href="#send"/></svg>Saluran &amp; sosial</span></div>
+    <div class="list" id="chlist"></div>
+  </section>
+
+  <footer>
+    <div class="own"><svg class="i"><use href="#crown"/></svg>OWNER: <b>Kalzy</b></div>
+    <div class="yr">© <span id="yr"></span> · Dibuat <svg class="i" style="vertical-align:-2px"><use href="#heart"/></svg></div>
+  </footer>
+</div>
+
+<script>
+/* ============ KONFIGURASI (edit di sini) ============ */
+const OWNER = 'Kalzy';
+const WORKER = 'https://NAMA-WORKER.USERNAME.workers.dev'; // ganti dengan URL Worker kamu
+
+// Tools. Isi "api" dengan endpoint yang berakhiran "url=" untuk mengaktifkan.
+const TOOLS = [
+  {id:'tiktok',   name:'TikTok',    icon:'note',  color:'var(--yl)', host:/tiktok\.com/i,                 ph:'https://vt.tiktok.com/...',      api: WORKER + '/api?url='},
+  {id:'instagram',name:'Instagram', icon:'cam',   color:'var(--pk)', host:/instagram\.com/i,              ph:'https://instagram.com/reel/...', api:''},
+  {id:'youtube',  name:'YouTube',   icon:'play',  color:'var(--rd)', host:/youtu(\.be|be\.com)/i,         ph:'https://youtu.be/...',           api:''},
+  {id:'facebook', name:'Facebook',  icon:'fb',    color:'var(--bl)', host:/(facebook|fb)\.(com|watch)/i,  ph:'https://fb.watch/...',           api:''},
+  {id:'twitter',  name:'Twitter / X',icon:'bird', color:'var(--gr)', host:/(twitter|x)\.com/i,            ph:'https://x.com/user/status/...',  api:''},
+  {id:'spotify',  name:'Spotify',   icon:'disc',  color:'var(--or)', host:/spotify\.com/i,                ph:'https://open.spotify.com/...',   api:''}
+];
+
+// Saluran & sosial. Ganti "url" dengan link kamu.
+const CHANNELS = [
+  {name:'Saluran WhatsApp', desc:'Update fitur & info terbaru', icon:'chat',  color:'var(--gr)', url:'https://whatsapp.com/channel/0029VbDlSBRGk1FopXSoYl3j'},
+  {name:'Telegram',         desc:'Channel & grup komunitas',   icon:'send',  color:'var(--bl)', url:'https://t.me/kalzyywkwkkw'},
+  {name:'Instagram',        desc:'Ikuti @kalzy',               icon:'cam',   color:'var(--pk)', url:'https://instagram.com/ISI_USERNAME_KAMU'},
+  {name:'GitHub',           desc:'Source code & proyek lain',  icon:'code',  color:'var(--yl)', url:'https://github.com/ISI_USERNAME_KAMU'},
+  {name:'Website lain',     desc:'Tools & layanan Kalzy',      icon:'globe', color:'var(--or)', url:'https://ISI_DOMAIN_KAMU'}
+];
+/* ====================================================== */
+
+const $ = id => document.getElementById(id);
+const ico = (n, c) => '<svg class="i ' + (c||'') + '"><use href="#' + n + '"/></svg>';
+let cur = TOOLS[0];
+
+$('yr').textContent = new Date().getFullYear();
+
+/* tabs */
+$('tabs').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === 'p-' + b.dataset.p));
+  window.scrollTo({top:0, behavior:'smooth'});
+};
+function goTab(p){ document.querySelector('#tabs [data-p="' + p + '"]').click(); }
+
+/* chips + tool grid */
+function setTool(id){
+  cur = TOOLS.find(t => t.id === id);
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.id === id));
+  $('url').placeholder = cur.ph;
+  $('lbl').textContent = 'Link ' + cur.name;
+  $('msg').classList.remove('on'); $('res').classList.remove('on');
+}
+$('chips').innerHTML = TOOLS.map(t => '<button class="chip" data-id="' + t.id + '" style="--c:' + t.color + '">' + ico(t.icon) + t.name + '</button>').join('');
+$('chips').onclick = e => { const c = e.target.closest('.chip'); if (c) setTool(c.dataset.id); };
+$('toolgrid').innerHTML = TOOLS.map(t => '<button class="card" data-id="' + t.id + '" style="--c:' + t.color + '"><span class="st ' + (t.api ? 'ok' : '') + '">' + (t.api ? 'Aktif' : 'Segera') + '</span>' + ico(t.icon,'big') + '<b>' + t.name + '</b><small>Unduh video &amp; media</small></button>').join('');
+$('toolgrid').onclick = e => { const c = e.target.closest('.card'); if (c){ setTool(c.dataset.id); goTab('dl'); } };
+$('chlist').innerHTML = CHANNELS.map(c => '<a class="ch" target="_blank" rel="noopener" href="' + c.url + '" style="--c:' + c.color + '">' + ico(c.icon) + '<div><b>' + c.name + '</b><small>' + c.desc + '</small></div>' + ico('arrow') + '</a>').join('');
+setTool('tiktok');
+
+/* riwayat (localStorage, aman bila diblokir) */
+const HK = 'kalzy_hist';
+function loadH(){ try{ return JSON.parse(localStorage.getItem(HK)) || []; }catch(e){ return []; } }
+function saveH(a){ try{ localStorage.setItem(HK, JSON.stringify(a)); }catch(e){} }
+function renderH(){
+  const h = loadH();
+  $('hist').innerHTML = h.length ? h.map((x,i) => '<div class="hi">' + ico(x.icon) + '<span class="u"></span><button data-i="' + i + '">Ulangi</button></div>').join('') : '<div class="empty">Belum ada riwayat</div>';
+  $('hist').querySelectorAll('.u').forEach((el,i) => el.textContent = h[i].url);
+}
+function addH(url){
+  const h = loadH().filter(x => x.url !== url);
+  h.unshift({url, tool:cur.id, icon:cur.icon});
+  saveH(h.slice(0,6)); renderH();
+}
+$('hist').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const x = loadH()[b.dataset.i]; if (!x) return;
+  setTool(x.tool); $('url').value = x.url; run();
+};
+$('clr').onclick = () => { saveH([]); renderH(); };
+renderH();
+
+
+
+/* parser respons */
+function walk(o, path, out){
+  if (typeof o === 'string'){ if (/^https?:\/\//i.test(o)) out.push({url:o, key:path.join('.').toLowerCase()}); }
+  else if (o && typeof o === 'object'){ for (const k in o) walk(o[k], path.concat(k), out); }
+}
+function pick(o, names){
+  let r = null;
+  (function f(x){
+    if (r || !x || typeof x !== 'object') return;
+    for (const k in x){
+      if (/^(creator|developer|dev|owner|credit|credits|powered|by)$/i.test(k)) continue;
+      if (names.includes(k.toLowerCase()) && typeof x[k] === 'string' && x[k] && !/nexa/i.test(x[k])){ r = x[k]; return; }
+      f(x[k]);
+    }
+  })(o);
+  return r;
+}
+function classify(links){
+  const v = [], a = [], im = [], seen = new Set();
+  links.forEach(l => {
+    if (seen.has(l.url)) return; seen.add(l.url);
+    const s = l.key + ' ' + l.url.toLowerCase();
+    if (/cover|thumb|avatar|poster/.test(l.key)) return;
+    if (/mp3|music|audio/.test(s)) a.push(l);
+    else if (/\.(jpe?g|png|webp)(\?|$)/.test(l.url.toLowerCase()) || /image|photo/.test(l.key)) im.push(l);
+    else v.push(l);
+  });
+  return {v, a, im};
+}
+function label(l, i){
+  const k = l.key;
+  if (/hd/.test(k)) return 'Video HD';
+  if (/nowm|no_wm|without|tanpa/.test(k)) return 'Video tanpa WM';
+  if (/wm|watermark/.test(k)) return 'Video + watermark';
+  return 'Video' + (i ? ' ' + (i+1) : '');
+}
+async function save(url, name, btn){
+  const em = btn.querySelector('em'); em.textContent = 'Proses...';
+  try{
+    const r = await fetch(url);
+    if (r.status === 429){ let m = 'Limit habis.'; try{ m = (await r.json()).message; }catch(e){} em.textContent = 'Limit habis'; err(m); loadQuota(); return; }
+    if (!r.ok) throw 0;
+    const b = await r.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(b); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    em.textContent = 'Beres'; loadQuota();
+  }catch(e){ window.open(url, '_blank', 'noopener'); em.textContent = 'Tab baru'; }
+}
+function tierOf(u){ try{ return new URL(u).searchParams.get('t') || '720'; }catch(e){ return '720'; } }
+function addBtn(icon, color, text, hint, url, name, off){
+  const b = document.createElement('button');
+  b.style.setProperty('--c', color);
+  b.innerHTML = '<span class="ic">' + ico(icon) + '</span><span class="t"></span><em>' + hint + '</em><span class="dn">' + ico('download') + '</span>';
+  b.querySelector('.t').textContent = text;
+  if (off){ b.disabled = true; if (url) b.querySelector('.t').textContent = text + ' (limit habis)'; }
+  else b.onclick = () => save(url, name, b);
+  $('dl').appendChild(b);
+}
+function err(t){ $('msgt').textContent = t; $('msg').classList.add('on'); }
+
+async function run(){
+  const link = $('url').value.trim();
+  $('msg').classList.remove('on'); $('res').classList.remove('on');
+  if (!user){ showLogin(); return; }
+  if (!cur.api){ err(cur.name + ' belum aktif. Isi endpoint API-nya di bagian TOOLS.'); return; }
+  if (!cur.host.test(link)){ err('Link ' + cur.name + '-nya belum valid.'); return; }
+  $('go').disabled = true; $('gotxt').textContent = 'Loading...';
+  try{
+    const r = await fetch(cur.api + encodeURIComponent(link) + '&user=' + encodeURIComponent(user));
+    if (!r.ok){ let m = ''; try{ m = (await r.json()).message; }catch(e){} throw new Error(m || 'Server error (' + r.status + ')'); }
+    const data = await r.json();
+    const links = []; walk(data, [], links);
+    const {v, a, im} = classify(links);
+    if (!v.length && !a.length && !im.length) throw new Error('Media tidak ditemukan. Coba link lain.');
+    $('dl').innerHTML = '';
+    const th = pick(data, ['cover','thumbnail','thumb','origin_cover']);
+    $('thumb').hidden = !th; if (th) $('thumb').src = th;
+    $('title').textContent = OWNER;
+    $('desc').textContent = (pick(data, ['title','desc','description','caption']) || '').replace(/nexa\s*dev|nexa/gi, OWNER);
+    const t = Date.now();
+    await loadQuota();
+    TIERS.forEach(T => {
+      const c = v.filter(l => tierOf(l.url) === T.id);
+      const best = c.find(l => /nowm|no_wm|without|tanpa/.test(l.key)) || c.find(l => !/(^|\.)wm|watermark/.test(l.key)) || c[0];
+      const q = quota[T.id];
+      const hint = q ? 'MP4 · sisa ' + q.left + '/' + q.limit : 'MP4 · tanpa limit';
+      if (!best){ addBtn('video', '#ddd', T.name + ' (tidak tersedia)', '-', '', '', true); return; }
+      addBtn('video', T.color, T.name, hint, best.url, 'kalzy-' + cur.id + '-' + t + '-' + T.id + '.mp4', !!q && q.left <= 0);
+    });
+    im.forEach((l,i) => addBtn('image', 'var(--bl)', 'Foto ' + (i+1), 'JPG', l.url, 'kalzy-foto-' + t + '-' + i + '.jpg'));
+    a.forEach((l,i) => addBtn('music', 'var(--pk)', 'Audio / musik', 'MP3', l.url, 'kalzy-audio-' + t + '-' + i + '.mp3'));
+    $('res').classList.add('on');
+    addH(link);
+  }catch(e){ err(e.message || 'Gagal ambil data. Coba lagi.'); }
+  finally{ $('go').disabled = false; $('gotxt').textContent = 'Unduh'; }
+}
+$('go').onclick = run;
+$('url').addEventListener('keydown', e => { if (e.key === 'Enter') run(); });
+$('paste').onclick = async () => { try{ $('url').value = await navigator.clipboard.readText(); }catch(e){} $('url').focus(); };
+
+/* login username + popup follow */
+const UKEY = 'kalzy_user';
+let user = '';
+try{ user = localStorage.getItem(UKEY) || ''; }catch(e){}
+const TIERS = [
+  {id:'720', name:'Video 720p', color:'var(--yl)'},
+  {id:'1k',  name:'Video 1K (HD)', color:'var(--gr)'},
+  {id:'2k',  name:'Video 2K', color:'var(--pk)'}
+];
+let quota = {};
+async function loadQuota(){
+  if (!user) return;
+  try{ const r = await fetch(WORKER + '/me?user=' + encodeURIComponent(user)); if (r.ok) quota = await r.json(); }catch(e){}
+}
+function showWho(){ $('whot').textContent = user ? '@' + user : 'Masuk'; }
+function maybeFollow(){
+  let done = false;
+  try{ done = localStorage.getItem('kalzy_followed') === '1' || sessionStorage.getItem('kalzy_later') === '1'; }catch(e){}
+  $('fol').href = CHANNELS[0].url;
+  if (!done) $('ov').classList.add('on');
+}
+$('fol').onclick = () => { try{ localStorage.setItem('kalzy_followed','1'); }catch(e){} $('ov').classList.remove('on'); };
+$('later').onclick = () => { try{ sessionStorage.setItem('kalzy_later','1'); }catch(e){} $('ov').classList.remove('on'); };
+function showLogin(){ $('lerr').textContent = ''; $('lov').classList.add('on'); setTimeout(() => $('lin').focus(), 50); }
+function doLogin(){
+  const v = $('lin').value.trim().toLowerCase();
+  if (!/^[a-z0-9_.]{3,20}$/.test(v)){ $('lerr').textContent = 'Username 3-20 karakter: huruf, angka, _ atau .'; return; }
+  user = v; try{ localStorage.setItem(UKEY, v); }catch(e){}
+  $('lov').classList.remove('on'); showWho(); loadQuota(); maybeFollow();
+}
+$('lgo').onclick = doLogin;
+$('lin').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+$('who').onclick = () => {
+  if (user && !confirm('Keluar dari @' + user + '?')) return;
+  user = ''; quota = {}; try{ localStorage.removeItem(UKEY); }catch(e){}
+  showWho(); $('res').classList.remove('on'); showLogin();
+};
+showWho();
+if (user){ loadQuota(); maybeFollow(); } else showLogin();
+</script>
+</body>
+</html>
